@@ -42,8 +42,41 @@ public class ActorInfoDao {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+			for(ActorInfo a : list){
+				System.out.println(a.getFirstName() + "페이징 디버깅");				
+			}
 		} 
 		return list;
+	}
+	public int selectActorInfoTotalRow() {							//총 열 수
+		int count=0;
+		Connection conn;
+		conn=DBUtil.getConnection();
+		String sql="select count(*) cnt from actor_info";
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			stmt=conn.prepareStatement(sql);
+			rs=stmt.executeQuery();
+			while(rs.next()) {
+				count=rs.getInt("cnt");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		System.out.println(count + " count 디버깅");
+		
+		return count;
 	}
 }
