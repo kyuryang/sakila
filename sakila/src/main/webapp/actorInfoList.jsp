@@ -27,7 +27,7 @@
 
 	//페이징
  	int totalCount = actorInfoDao.selectActorInfoTotalRow();		//db 총 데이터 수
-	int lastPage =(int)(Math.ceil((double)totalCount / (double)rowPerPage)); 	//총 페이지 수
+	int lastPage =(int)(Math.ceil((double)totalCount /(double)rowPerPage)); 	//총 페이지 수
 	/*
 	알고리즘 
 	select .... limit 0,10"
