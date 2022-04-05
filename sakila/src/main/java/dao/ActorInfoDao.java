@@ -10,7 +10,7 @@ import vo.ActorInfo;
 
 public class ActorInfoDao {
 		public ActorInfoDao() {}
-	public List<ActorInfo> selectActorInfoListByPage(int beginRow, int rowPerPage){
+	public List<ActorInfo> selectActorInfoListByPage(int beginRow, int rowPerPage){	//actorInfo 페이징
 		List<ActorInfo> list = new ArrayList<ActorInfo>();
 		Connection conn=null;			
 		conn =DBUtil.getConnection();

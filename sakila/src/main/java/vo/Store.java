@@ -8,6 +8,11 @@ public class Store {
 	public int getStoreId() {
 		return storeId;
 	}
+	@Override
+	public String toString() {
+		return "Store [storeId=" + storeId + ", managerStaffId=" + managerStaffId + ", addressId=" + addressId
+				+ ", lastUpdate=" + lastUpdate + "]";
+	}
 	public void setStoreId(int storeId) {
 		this.storeId = storeId;
 	}

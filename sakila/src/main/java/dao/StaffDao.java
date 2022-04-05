@@ -18,7 +18,7 @@ public class StaffDao {
 		Class.forName("org.mariadb.jdbc.Driver");
 		conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/sakila","root","java1234");
 
-		String sql = "SELECT\r\n"
+		String sql = "SELECT"
 				+ "		s1.staff_id 											staffId,"
 				+ "		CONCAT(s1.first_name,' ',s1.last_name) 					staffName,"
 				+ "		s1.address_id 											addressId,"
@@ -72,7 +72,7 @@ public class StaffDao {
 	public static void main(String[] args) {
 		StaffDao sd = new StaffDao();
 		List<Map<String,Object>> list = sd.selectStaffList();
-		for(Map m : list) {
+		for(Map<String,Object> m : list) {
 			System.out.print(m.get("staffId"));
 			System.out.print(m.get("staffName"));
 			System.out.print(m.get("addressId"));				//단위테스트
