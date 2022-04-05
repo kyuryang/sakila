@@ -19,6 +19,9 @@
 		<li><a href="<%=request.getContextPath()%>/salesByFilmCategory.jsp">salesByFilmCategory(view)</a></li>
 		<li><a href="<%=request.getContextPath()%>/salesByStore.jsp">salesByStore(view)</a></li>
 		<li><a href="<%=request.getContextPath()%>/staffListView.jsp">staffList(view)</a></li>
+		<li><a href="<%=request.getContextPath()%>/filmInStock.jsp">filmInStock(procedure)</a></li>
+	<li><a href="<%=request.getContextPath()%>/filmNotInStock.jsp">filmNotInStock(procedure)</a></li>
+		<li><a href="<%=request.getContextPath()%>/rewardsReport.jsp">rewardsReport(procedure)</a></li>
 	</ol>
 
 </body>

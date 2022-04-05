@@ -4,7 +4,9 @@ import vo.Customer;
 import util.DBUtil;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomerDao {
 	public List<Customer> selectCustomerListByPage(int beginRow, int rowPerPage){
@@ -85,6 +87,48 @@ public class CustomerDao {
 		
 		return count;
 	}
-
+	public Map<String,Object> rewardsReport(int purchases, int amount){
+		Map<String,Object> map = new HashMap<String,Object>();
+		Connection conn = null;
+		CallableStatement stmt = null;											//프로시저 실행 타입
+		ResultSet rs = null;
+		
+		List<Integer> list = new ArrayList<>();
+		Integer count = 0;
+		conn=DBUtil.getConnection();
+		try {
+			stmt=conn.prepareCall("{call rewards_report(?,?,?)}");			//film_not_in_stock 프로시저 호출
+			stmt.setInt(1, purchases);
+			stmt.setInt(2, amount);
+			stmt.registerOutParameter(3, Types.INTEGER);   // ==> 결과값을 받을 변수는 registerOutParameter()사용  3번째 변수형
+			rs=stmt.executeQuery();
+			while(rs.next()) {
+				list.add(rs.getInt(1));    //rs.getInt("inventory_id
+				
+			}
+			count=stmt.getInt(3);		//프로시저 3번째 out변수 값
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		map.put("list", list);
+		map.put("count", count);
+		
+		
+		return map;
+		
+	}
+	public static void main(String[] args) {
+		CustomerDao cd = new CustomerDao();
+		Map<String,Object> map = new HashMap<>();
+		map=cd.rewardsReport(1, 10);
+		List<Integer> list =  (List<Integer>)map.get("list");
+		int count = (Integer)map.get("count");
+		System.out.println(count);
+		for(int i : list) {
+			System.out.println(i);
+		
+	}
 }
 
+}

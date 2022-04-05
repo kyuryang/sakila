@@ -1,6 +1,9 @@
 package dao;
 
 import java.util.*;
+
+import javax.servlet.ServletOutputStream;
+
 import java.sql.*;
 
 public class StaffDao {
@@ -31,6 +34,7 @@ public class StaffDao {
 				+ "		INNER JOIN address a"
 				+ "		ON s1.store_id = s2.store_id"
 				+ "		AND s1.address_id = a.address_id;";
+		
 		stmt =conn.prepareStatement(sql);
 		rs = stmt.executeQuery();
 		while(rs.next()) {
@@ -39,7 +43,7 @@ public class StaffDao {
 			map.put("staffName", rs.getString("staffName"));
 			map.put("addressId", rs.getInt("addressId"));
 			map.put("staffAddress", rs.getString("staffAddress"));
-			map.put("picture", rs.getString("picture"));
+			map.put("picture", rs.getBlob("picture"));
 			map.put("email", rs.getString("email"));
 			map.put("storeId", rs.getInt("storeId"));
 			map.put("active", rs.getInt("active"));
