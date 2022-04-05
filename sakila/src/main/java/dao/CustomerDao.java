@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomerDao {
-	public List<Customer> selectCustomerListByPage(int beginRow, int rowPerPage){
+	public List<Customer> selectCustomerListByPage(int beginRow, int rowPerPage){			//Customer view 페이징 메서드
 		List<Customer> list =new ArrayList<>();
 	Connection conn=null;	
 	conn=DBUtil.getConnection();
@@ -30,19 +30,19 @@ public class CustomerDao {
 			cu.setCustomerId(rs.getInt("customerId"));
 			cu.setCustomerName(rs.getString("customerName"));
 			cu.setCustomerAddress(rs.getString("customerAddress"));
-			cu.setCustomerZipcode(rs.getString("customerZipcode"));
+			cu.setCustomerZipcode(rs.getString("customerZipcode"));				//DB 결과값들을 cu에 저장
 			cu.setCustomerPhone(rs.getString("customerPhone"));
 			cu.setCustomerCountry(rs.getString("customerCountry"));
 			cu.setCustomerNotes(rs.getString("customerNotes"));
 			cu.setCustomerSID(rs.getInt("customerSID"));
-			list.add(cu);
+			list.add(cu);														//cu를 list에 저장
 			} 
 		} catch (SQLException e1) {
 		e1.printStackTrace();
 	} finally {
 		try {
 			rs.close();
-			stmt.close();
+			stmt.close();														//db자원 해제
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -56,7 +56,7 @@ public class CustomerDao {
 	return list;
 	}
 	
-	public int selectTotalRow() {
+	public int selectTotalRow() {												//총 출력된 DB 값 출력 메서드
 		int count=0;
 		Connection conn;
 		conn=DBUtil.getConnection();
@@ -66,8 +66,8 @@ public class CustomerDao {
 		
 		try {
 			stmt=conn.prepareStatement(sql);
-			rs=stmt.executeQuery();
-			while(rs.next()) {
+			rs=stmt.executeQuery();												//결과값을 rs에 저장
+			while(rs.next()) {													//rs의 다음값이 없을 때까지
 				count=rs.getInt("cnt");
 			}
 		} catch (SQLException e) {
@@ -76,7 +76,7 @@ public class CustomerDao {
 		} finally {
 			try {
 				rs.close();
-				stmt.close();
+				stmt.close();													//db자원 해제
 				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -87,15 +87,15 @@ public class CustomerDao {
 		
 		return count;
 	}
-	public List<Map<String,Object>> rewardsReport(int purchases, double amount){
+	public List<Map<String,Object>> rewardsReport(int purchases, double amount){		//reward_Report  프로시저 호출 메서드
 		Map<String,Object> map = null;
 		Connection conn = null;
 		CallableStatement stmt = null;											//프로시저 실행 타입
 		ResultSet rs = null;
 		
-		List<Map<String,Object>> list = new ArrayList<>();
+		List<Map<String,Object>> list = new ArrayList<>();						
 		
-		//Integer count = 0;
+		Integer count = 0;														//프로시저 결과 수를 저장할 변수
 		conn=DBUtil.getConnection();
 		try {
 			stmt=conn.prepareCall("{call rewards_report(?,?,?)}");			//rewards_report
@@ -105,22 +105,26 @@ public class CustomerDao {
 			stmt.registerOutParameter(3, Types.INTEGER);   // ==> 결과값을 받을 변수는 registerOutParameter()사용  3번째 변수형
 			rs=stmt.executeQuery();
 
-			while(rs.next()) {													//list.add(rs.getInt(1));    //rs.getInt("inventory_id
+			while(rs.next()) {													//rs값들을 -> map에 저장 후 -> list에 저장
 			map =new HashMap<String,Object>();
-			map.put("customerId", rs.getInt("customer_id"));
-			map.put("storeId", rs.getInt("store_id"));
+			map.put("customerId", rs.getInt("customer_id"));			
+			map.put("storeId", rs.getInt("store_id"));							
 			map.put("firstName", rs.getString("first_name"));
 			map.put("lastName", rs.getString("last_name"));
-			map.put("email", rs.getString("email"));
-			map.put("addressId", rs.getInt("address_id"));
+			map.put("email", rs.getString("email"));							//프로시저 결과 값들을 map에 저장 
+			map.put("addressId", rs.getInt("address_id"));						
 			map.put("active", rs.getInt("active"));
 			map.put("createDate", rs.getString("create_date"));
 			map.put("lastUpdate", rs.getString("last_update"));
-		//	map.put("count", rs.getInt(3));
-			list.add(map);
+			
+			list.add(map);														//저장한 map을 list에 저장
 			
 			}
-		//	count=stmt.getInt(3);		//프로시저 3번째 out변수 값
+			count=stmt.getInt(3);											//프로시저 out변수값 count에 저장
+			map.put("count", count);
+							//프로시저 3번째 out변수 값
+			;		
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -134,14 +138,12 @@ public class CustomerDao {
 		Map<String,Object> map = new HashMap<>();
 		
 		List<Map<String, Object>> list = cd.rewardsReport(1,1.0);
-		//int count = (Integer)map.get("count");
-		//System.out.println(count);
-		for(Map<String, Object> i : list) {
+		for(Map<String, Object> i : list) {											//단위테스트
 			System.out.println(i);
 		
 	}
 		for(int i=0; i<list.size(); i++) {
-			System.out.println(list.get(i).get("customerId"));
+			System.out.println(list.get(i).get("count"));
 		}
 }
 

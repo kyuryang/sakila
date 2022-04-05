@@ -13,7 +13,7 @@ import java.util.Map;
 import util.DBUtil;
 
 public class FilmDao {			//필름 프로시저
-	public Map<String,Object> filmStockCall(int filmId, int storeId){
+	public Map<String,Object> filmStockCall(int filmId, int storeId){			//film_in_Stcok 프로시저 호출 메서드
 		Map<String,Object> map = new HashMap<String,Object>();
 		
 		Connection conn = null;
@@ -50,7 +50,7 @@ public class FilmDao {			//필름 프로시저
 		
 		return map;
 	}
-	public Map<String,Object> filmNotStockCall(int filmId, int storeId){
+	public Map<String,Object> filmNotStockCall(int filmId, int storeId){		//filmNotStockCall 프로시저 호출 메서드
 		Map<String,Object> map = new HashMap<String,Object>();
 		Connection conn = null;
 		CallableStatement stmt = null;											//프로시저 실행 타입
@@ -66,7 +66,7 @@ public class FilmDao {			//필름 프로시저
 			stmt.registerOutParameter(3, Types.INTEGER);   // ==> 결과값을 받을 변수는 registerOutParameter()사용  3번째 변수형
 			rs=stmt.executeQuery();
 			while(rs.next()) {
-				list.add(rs.getInt(1));    //rs.getInt("inventory_id
+				list.add(rs.getInt(1));    //rs.getInt("inventory_id")
 				
 			}
 			count=stmt.getInt(3);		//프로시저 3번째 out변수 값
