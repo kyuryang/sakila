@@ -87,48 +87,62 @@ public class CustomerDao {
 		
 		return count;
 	}
-	public Map<String,Object> rewardsReport(int purchases, int amount){
-		Map<String,Object> map = new HashMap<String,Object>();
+	public List<Map<String,Object>> rewardsReport(int purchases, double amount){
+		Map<String,Object> map = null;
 		Connection conn = null;
 		CallableStatement stmt = null;											//프로시저 실행 타입
 		ResultSet rs = null;
 		
-		List<Integer> list = new ArrayList<>();
-		Integer count = 0;
+		List<Map<String,Object>> list = new ArrayList<>();
+		
+		//Integer count = 0;
 		conn=DBUtil.getConnection();
 		try {
-			stmt=conn.prepareCall("{call rewards_report(?,?,?)}");			//film_not_in_stock 프로시저 호출
+			stmt=conn.prepareCall("{call rewards_report(?,?,?)}");			//rewards_report
 			stmt.setInt(1, purchases);
-			stmt.setInt(2, amount);
+			
+			stmt.setDouble(2, amount);
 			stmt.registerOutParameter(3, Types.INTEGER);   // ==> 결과값을 받을 변수는 registerOutParameter()사용  3번째 변수형
 			rs=stmt.executeQuery();
-			while(rs.next()) {
-				list.add(rs.getInt(1));    //rs.getInt("inventory_id
-				
+
+			while(rs.next()) {													//list.add(rs.getInt(1));    //rs.getInt("inventory_id
+			map =new HashMap<String,Object>();
+			map.put("customerId", rs.getInt("customer_id"));
+			map.put("storeId", rs.getInt("store_id"));
+			map.put("firstName", rs.getString("first_name"));
+			map.put("lastName", rs.getString("last_name"));
+			map.put("email", rs.getString("email"));
+			map.put("addressId", rs.getInt("address_id"));
+			map.put("active", rs.getInt("active"));
+			map.put("createDate", rs.getString("create_date"));
+			map.put("lastUpdate", rs.getString("last_update"));
+		//	map.put("count", rs.getInt(3));
+			list.add(map);
+			
 			}
-			count=stmt.getInt(3);		//프로시저 3번째 out변수 값
+		//	count=stmt.getInt(3);		//프로시저 3번째 out변수 값
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		map.put("list", list);
-		map.put("count", count);
 		
-		
-		return map;
+		return list;
 		
 	}
 	public static void main(String[] args) {
 		CustomerDao cd = new CustomerDao();
 		Map<String,Object> map = new HashMap<>();
-		map=cd.rewardsReport(1, 10);
-		List<Integer> list =  (List<Integer>)map.get("list");
-		int count = (Integer)map.get("count");
-		System.out.println(count);
-		for(int i : list) {
+		
+		List<Map<String, Object>> list = cd.rewardsReport(1,1.0);
+		//int count = (Integer)map.get("count");
+		//System.out.println(count);
+		for(Map<String, Object> i : list) {
 			System.out.println(i);
 		
 	}
+		for(int i=0; i<list.size(); i++) {
+			System.out.println(list.get(i).get("customerId"));
+		}
 }
 
 }
