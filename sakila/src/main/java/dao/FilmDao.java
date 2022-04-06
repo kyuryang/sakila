@@ -143,6 +143,252 @@ public class FilmDao {			//필름 프로시저
 		
 		return count;
 	}
+	public List<Double> selectfilmPriceList(){
+		List<Double> list = new ArrayList<Double>();
+		Connection conn=null;
+		PreparedStatement stmt=null;
+		ResultSet rs=null;														//DB 연동하여 
+		conn=DBUtil.getConnection();
+		
+		String sql="select distinct price from film_list order by price";
+		try {
+			stmt=conn.prepareStatement(sql);									//sql문 입력후 실행
+			rs=stmt.executeQuery();												//결과값 rs에 저장
+			while(rs.next()) {													//rs의 다음 결과값이 없을 때 까지 실행
+				list.add(rs.getDouble("price"));
+			}	
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+				stmt.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+	public List<FilmInfo> selectFilmListSearch(int beginRow, int rowPerPage, String category, String rating, double price, int length, String title, String actor) {		
+		List<FilmInfo> list = new ArrayList<FilmInfo>();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		conn = DBUtil.getConnection();
+		String sql="";
+		
+		try {
+			
+			
+			// 동적쿼리
+			
+		if(category.equals("")==true) {			//카테고리에 선택 안할 시 
+			if(rating.equals("")==true) {				//등급 선선택 안할 시
+			sql = "SELECT fid,title,description,category,price,length,rating,actors FROM film_list WHERE title LIKE ? AND actors LIKE ?";
+			if(  price==-1 && length==-1) {		//price length 입력 x
+				sql += " ORDER BY fid LIMIT ?, ?";
+				stmt = conn.prepareStatement(sql);
+				stmt.setString(1, "%"+title+"%");
+				stmt.setString(2, "%"+actor+"%");
+				stmt.setInt(3, beginRow);
+				stmt.setInt(4, rowPerPage);
+			} else if(  price==-1 && length!=-1) { // length만 입력되었다
+				if(length == 0) {
+					sql += " AND length<60 ORDER BY fid LIMIT ?, ?";
+				} else if(length == 1) {
+					sql += " AND length>=60 ORDER BY fid LIMIT ?, ?";
+				}
+				stmt = conn.prepareStatement(sql);
+				stmt.setString(1, "%"+title+"%");
+				stmt.setString(2, "%"+actor+"%");
+				stmt.setInt(3, beginRow);
+				stmt.setInt(4, rowPerPage);
+			} else if(  price!=-1 && length==-1) { //price만 입력
+				sql += " AND price=? ORDER BY fid LIMIT ?, ?";
+				stmt = conn.prepareStatement(sql);
+				stmt.setString(1, "%"+title+"%");
+				stmt.setString(2, "%"+actor+"%");
+				stmt.setDouble(3, price);
+				stmt.setInt(4, beginRow);
+				stmt.setInt(5, rowPerPage);
+			} else if(  price!=-1 && length!=-1) { //price,length 둘 다 입력
+				if(length == 0) {
+					sql += " AND price=? AND length<60 ORDER BY fid LIMIT ?, ?";
+				} else if(length == 1) {
+					sql += " AND price=? AND length>=60 ORDER BY fid LIMIT ?, ?";
+				}
+				stmt = conn.prepareStatement(sql);
+				stmt.setString(1, "%"+title+"%");
+				stmt.setString(2, "%"+actor+"%");
+				stmt.setDouble(3, price);
+				stmt.setInt(4, beginRow);
+				stmt.setInt(5, rowPerPage);
+			}   
+			} else {											//등급 선택 O 카테고리 X
+				sql = "SELECT fid,title,description,category,price,length,rating,actors FROM film_list WHERE rating like ? and title LIKE ? AND actors LIKE ?";
+				if(  price==-1 && length==-1) {		//price length 입력 x
+					sql += " ORDER BY fid LIMIT ?, ?";
+					stmt = conn.prepareStatement(sql);
+					stmt.setString(1, "%"+rating+"%");
+					stmt.setString(2, "%"+title+"%");
+					stmt.setString(3, "%"+actor+"%");
+					stmt.setInt(4, beginRow);
+					stmt.setInt(5, rowPerPage);
+				} else if(  price==-1 && length!=-1) { // length만 입력되었다
+					if(length == 0) {
+						sql += " AND length<60 ORDER BY fid LIMIT ?, ?";
+					} else if(length == 1) {
+						sql += " AND length>=60 ORDER BY fid LIMIT ?, ?";
+					}
+					stmt = conn.prepareStatement(sql);
+					stmt.setString(1, rating);
+					stmt.setString(2, "%"+title+"%");
+					stmt.setString(3, "%"+actor+"%");
+					stmt.setInt(4, beginRow);
+					stmt.setInt(5, rowPerPage);
+				} else if(  price!=-1 && length==-1) { //price만 입력
+					sql += " AND price=? ORDER BY fid LIMIT ?, ?";
+					stmt = conn.prepareStatement(sql);
+					stmt.setString(1, rating);
+					stmt.setString(2, "%"+title+"%");
+					stmt.setString(3, "%"+actor+"%");
+					stmt.setDouble(4, price);
+					stmt.setInt(5, beginRow);
+					stmt.setInt(6, rowPerPage);
+				} else if(  price!=-1 && length!=-1) { //price,length 둘 다 입력
+					if(length == 0) {
+						sql += " AND price=? AND length<60 ORDER BY fid LIMIT ?, ?";
+					} else if(length == 1) {
+						sql += " AND price=? AND length>=60 ORDER BY fid LIMIT ?, ?";
+					}
+					stmt = conn.prepareStatement(sql);
+					stmt.setString(1, rating);
+					stmt.setString(2, "%"+title+"%");
+					stmt.setString(3, "%"+actor+"%");
+					stmt.setDouble(4, price);
+					stmt.setInt(5, beginRow);
+					stmt.setInt(6, rowPerPage);
+				}   
+			}
+			
+		} else {										//카테고리 O
+			 sql = "SELECT fid,title,description,category,price,length,rating,actors FROM film_list WHERE category LIKE ? AND title LIKE ? AND actors LIKE ?";
+				if(rating.equals("")==true) {				//등급 X
+					sql = "SELECT fid,title,description,category,price,length,rating,actors FROM film_list WHERE title LIKE ? AND actors LIKE ?";
+					if(  price==-1 && length==-1) {		//price length 입력 x
+						sql += " ORDER BY fid LIMIT ?, ?";
+						stmt = conn.prepareStatement(sql);
+						stmt.setString(1, "%"+title+"%");
+						stmt.setString(2, "%"+actor+"%");
+						stmt.setInt(3, beginRow);
+						stmt.setInt(4, rowPerPage);
+					} else if(  price==-1 && length!=-1) { // length만 입력되었다
+						if(length == 0) {
+							sql += " AND length<60 ORDER BY fid LIMIT ?, ?";
+						} else if(length == 1) {
+							sql += " AND length>=60 ORDER BY fid LIMIT ?, ?";
+						}
+						stmt = conn.prepareStatement(sql);
+						stmt.setString(1, "%"+title+"%");
+						stmt.setString(2, "%"+actor+"%");
+						stmt.setInt(3, beginRow);
+						stmt.setInt(4, rowPerPage);
+					} else if(  price!=-1 && length==-1) { //price만 입력
+						sql += " AND price=? ORDER BY fid LIMIT ?, ?";
+						stmt = conn.prepareStatement(sql);
+						stmt.setString(1, "%"+title+"%");
+						stmt.setString(2, "%"+actor+"%");
+						stmt.setDouble(3, price);
+						stmt.setInt(4, beginRow);
+						stmt.setInt(5, rowPerPage);
+					} else if(  price!=-1 && length!=-1) { //price,length 둘 다 입력
+						if(length == 0) {
+							sql += " AND price=? AND length<60 ORDER BY fid LIMIT ?, ?";
+						} else if(length == 1) {
+							sql += " AND price=? AND length>=60 ORDER BY fid LIMIT ?, ?";
+						}
+						stmt = conn.prepareStatement(sql);
+						stmt.setString(1, "%"+title+"%");
+						stmt.setString(2, "%"+actor+"%");
+						stmt.setDouble(3, price);
+						stmt.setInt(4, beginRow);
+						stmt.setInt(5, rowPerPage);
+					}   
+					} else {											//등급 선택 O 카테고리 O
+						sql = "SELECT fid,title,description,category,price,length,rating,actors FROM film_list WHERE category like ? and rating like ? and title LIKE ? AND actors LIKE ?";
+						if(  price==-1 && length==-1) {		//price length 입력 x
+							sql += " ORDER BY fid LIMIT ?, ?";
+							stmt = conn.prepareStatement(sql);
+							stmt.setString(1, category);
+							stmt.setString(2, rating);
+							stmt.setString(3, "%"+title+"%");
+							stmt.setString(4, "%"+actor+"%");
+							stmt.setInt(5, beginRow);
+							stmt.setInt(6, rowPerPage);
+						} else if(  price==-1 && length!=-1) { // length만 입력되었다
+							if(length == 0) {
+								sql += " AND length<60 ORDER BY fid LIMIT ?, ?";
+							} else if(length == 1) {
+								sql += " AND length>=60 ORDER BY fid LIMIT ?, ?";
+							}
+							stmt = conn.prepareStatement(sql);
+							stmt.setString(1, category);
+							stmt.setString(2, rating);
+							stmt.setString(3, "%"+title+"%");
+							stmt.setString(4, "%"+actor+"%");
+							stmt.setInt(5, beginRow);
+							stmt.setInt(6, rowPerPage);
+						} else if(  price!=-1 && length==-1) { //price만 입력
+							sql += " AND price=? ORDER BY fid LIMIT ?, ?";
+							stmt = conn.prepareStatement(sql);
+							stmt.setString(1, category);
+							stmt.setString(2, rating);
+							stmt.setString(3, "%"+title+"%");
+							stmt.setString(4, "%"+actor+"%");
+							stmt.setDouble(5, price);
+							stmt.setInt(6, beginRow);
+							stmt.setInt(7, rowPerPage);
+						} else if(  price!=-1 && length!=-1) { //price,length 둘 다 입력
+							if(length == 0) {
+								sql += " AND price=? AND length<60 ORDER BY fid LIMIT ?, ?";
+							} else if(length == 1) {
+								sql += " AND price=? AND length>=60 ORDER BY fid LIMIT ?, ?";
+							}
+							stmt = conn.prepareStatement(sql);
+							stmt.setString(1, category);
+							stmt.setString(2, rating);
+							stmt.setString(3, "%"+title+"%");
+							stmt.setString(4, "%"+actor+"%");
+							stmt.setDouble(5, price);
+							stmt.setInt(6, beginRow);
+							stmt.setInt(7, rowPerPage);
+						}   
+					
+					}
+		}// 13(+알파)개의 쿼리 분기 추가
+			
+
+            rs = stmt.executeQuery();
+			while(rs.next()) {
+				FilmInfo f = new FilmInfo();
+				f.setFID(rs.getInt("fid"));
+				f.setTitle(rs.getString("title"));
+				f.setDescription(rs.getString("description"));
+				f.setCategory(rs.getString("category"));
+				f.setPrice(rs.getDouble("price"));
+				f.setLength(rs.getInt("length"));
+				f.setRating(rs.getString("rating"));
+				f.setActors(rs.getString("actors"));
+				list.add(f);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 	
 	public static void main(String[] args) {
 		FilmDao fd = new FilmDao();
@@ -169,5 +415,13 @@ public class FilmDao {			//필름 프로시저
 			System.out.println(f);
 		}
 		System.out.println(fd.filmTotalRow());								//filmTotalRow 단위테스트
+		
+		List<FilmInfo> searchList = new ArrayList<>();
+		searchList = fd.selectFilmListSearch(0,10,"","a", 0.99, 1,"","");
+		for(FilmInfo f : searchList) {
+			System.out.println(f);
+			
+		}
+		
 	}
 }
