@@ -84,6 +84,51 @@ public class FilmDao {			//필름 프로시저
 		return map;
 		
 	}
+	
+	public List<FilmInfo> selectNBSFilmList(int beginRow,int rowPerPage){		//nicer_but_slower_film_list view 조회 메서드
+		List<FilmInfo> list = new ArrayList<>();
+		Connection conn= null;
+		PreparedStatement stmt =null;
+		ResultSet rs =null;
+		
+		conn=DBUtil.getConnection();											//DBUtil에서 static메서드 호출
+		String sql = "select FID, title,description, category, price, length,rating,actors from nicer_but_slower_film_list order by FID Limit ?,?";
+		try {																	//배우 목록을 소문자로 출력해주는 리스트뷰 조회하는 쿼리문
+			stmt=conn.prepareStatement(sql);
+			stmt.setInt(1, beginRow);
+			stmt.setInt(2, rowPerPage);
+			rs=stmt.executeQuery();
+			FilmInfo f = null;
+			while(rs.next()) {
+				f=new FilmInfo();
+				f.setFID(rs.getInt("FID"));
+				f.setTitle(rs.getString("title"));
+				f.setDescription(rs.getString("description"));					//쿼리결과물 -> FIlmInfo객체 저장 후 -> list에 저장
+				f.setCategory(rs.getString("category"));
+				f.setPrice(rs.getDouble("price"));
+				f.setLength(rs.getInt("length"));
+				f.setRating(rs.getString("rating"));
+				f.setActors(rs.getString("actors"));
+				list.add(f);
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+		try {
+			conn.close();
+			stmt.close();														//db자원해제
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		}
+		
+		return list;
+	}
 	public List<FilmInfo> selectFilmListByPage(int beginRow, int rowPerPage){	//film_list view 페이징,db연동 후 조회값 list에 저장
 		List<FilmInfo> list =new ArrayList<FilmInfo>();
 		FilmInfo fi = null;
