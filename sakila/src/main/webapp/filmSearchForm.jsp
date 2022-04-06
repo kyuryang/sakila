@@ -7,6 +7,8 @@
 	List<Category> categoryList = categoryDao.selectCategoryList();	
 	FilmDao filmDao = new FilmDao();
 	List<Double> priceList = filmDao.selectfilmPriceList();
+	
+	
 %>
 <!DOCTYPE html>
 <html>
