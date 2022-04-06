@@ -387,7 +387,7 @@ public class FilmDao {			//필름 프로시저
 		}
 		return list;
 	}
-	public int totalRow(String category, String rating, double price, int length, String title, String actor) { 
+	public int searchTotalRow(String category, String rating, double price, int length, String title, String actor) {   	//검색 후 결과의 총 데이터 수 반환 
 		int count =0;
 		
 		Connection conn = null;
@@ -562,9 +562,9 @@ public class FilmDao {			//필름 프로시저
 					
 					}
 		}
-		rs = stmt.executeQuery();
+		rs = stmt.executeQuery();					//if문을 통해 각 검색된 조건마다의 데이터 개수를 결과로 가져와서
 		while(rs.next()) {
-			count=rs.getInt("cnt");
+			count=rs.getInt("cnt");					//count에 저장
 		}
 	} catch(SQLException e) {
 		e.printStackTrace();

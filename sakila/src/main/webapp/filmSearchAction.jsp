@@ -24,7 +24,7 @@
 	int rowPerPage = 10;
 	
 	FilmDao filmDao = new FilmDao();
-	int totalRow= filmDao.totalRow(category, rating, price, length, title, actors); //검색된 데이터 개수 
+	int totalRow= filmDao.searchTotalRow(category, rating, price, length, title, actors); //검색된 데이터 개수 
 	beginRow= (currentPage-1) * rowPerPage;							//페이지당 첫 데이타 행 
 	
 	List<FilmInfo> list = filmDao.selectFilmListSearch(beginRow ,rowPerPage ,category, rating, price, length, title, actors);
