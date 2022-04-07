@@ -42,15 +42,7 @@ public class RentalDao {
 			  stmt.setString(3,endDate ) ;
 			  stmt.setInt(4, beginRow);
 			  stmt.setInt(5, rowPerPage);
-		} else if(storeId==-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {	//년도 O
-			sql += " ORDER BY rental_id LIMIT ?, ?";
-			stmt = conn.prepareStatement(sql);
-			  stmt.setString(1, "%"+customerName+"%");
-			  stmt.setString(2, beginDate);
-			  stmt.setString(3,endDate );
-			  stmt.setInt(4, beginRow);
-			  stmt.setInt(5, rowPerPage);
-		} else if (storeId !=-1 && beginDate.equals("0") && endDate.equals("9999-12-12") ) {			//가게 O
+		} else if (storeId !=-1 && beginDate.equals("0") && endDate.equals("9999-12-12") ) {			//가게만 O
 			  sql+="and s.store_id=?  ORDER BY rental_id LIMIT ?, ?";
 			  stmt = conn.prepareStatement(sql);	
 			  stmt.setString(1, "%"+customerName+"%");
@@ -60,7 +52,23 @@ public class RentalDao {
 			  stmt.setInt(5, beginRow);
 			  stmt.setInt(6, rowPerPage);
 			  
-		}else if (storeId !=-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//연도, 가게 O
+		} else if(storeId==-1 && !beginDate.equals("0") && endDate.equals("9999-12-12") ) {	//빌린년도 O
+			sql += " ORDER BY rental_id LIMIT ?, ?";
+			stmt = conn.prepareStatement(sql);
+			  stmt.setString(1, "%"+customerName+"%");
+			  stmt.setString(2, beginDate);
+			  stmt.setString(3,endDate );
+			  stmt.setInt(4, beginRow);
+			  stmt.setInt(5, rowPerPage);
+		}else if(storeId==-1 && beginDate.equals("0") && !endDate.equals("9999-12-12") ) {	//반환년도 O
+			sql += " ORDER BY rental_id LIMIT ?, ?";
+			stmt = conn.prepareStatement(sql);
+			  stmt.setString(1, "%"+customerName+"%");
+			  stmt.setString(2, beginDate);
+			  stmt.setString(3,endDate );
+			  stmt.setInt(4, beginRow);
+			  stmt.setInt(5, rowPerPage);
+		} else if (storeId !=-1 && !beginDate.equals("0") && endDate.equals("9999-12-12") ) {		//가게번호, 빌린년도
 			sql+="and s.store_id=? ORDER BY rental_id LIMIT ?, ?";
 			stmt = conn.prepareStatement(sql);
 			  stmt.setString(1, "%"+customerName+"%");
@@ -69,11 +77,38 @@ public class RentalDao {
 			  stmt.setInt(4, storeId);
 			  stmt.setInt(5, beginRow);
 			  stmt.setInt(6, rowPerPage);
-		} 
+		} else if (storeId !=-1 && beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//가게번호, 반환년도
+			sql+="and s.store_id=? ORDER BY rental_id LIMIT ?, ?";
+			stmt = conn.prepareStatement(sql);
+			  stmt.setString(1, "%"+customerName+"%");
+			  stmt.setString(2, beginDate);
+			  stmt.setString(3,endDate ) ;
+			  stmt.setInt(4, storeId);
+			  stmt.setInt(5, beginRow);
+			  stmt.setInt(6, rowPerPage);
+		} else if (storeId ==-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//빌린년도,반환년도
+			sql+=" ORDER BY rental_id LIMIT ?, ?";
+			stmt = conn.prepareStatement(sql);
+			  stmt.setString(1, "%"+customerName+"%");
+			  stmt.setString(2, beginDate);
+			  stmt.setString(3,endDate ) ;
+			  stmt.setInt(4, beginRow);
+			  stmt.setInt(5, rowPerPage);
+		} else if (storeId !=-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//3개 다 O
+			sql+="and s.store_id=? ORDER BY rental_id LIMIT ?, ?";
+			stmt = conn.prepareStatement(sql);
+			  stmt.setString(1, "%"+customerName+"%");
+			  stmt.setString(2, beginDate);
+			  stmt.setString(3,endDate ) ;
+			  stmt.setInt(4, storeId);
+			  stmt.setInt(5, beginRow);
+			  stmt.setInt(6, rowPerPage);
+		}
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				 map= new HashMap<String, Object>();
 				map.put("rentalId", rs.getInt("rentalId"));
+				map.put("storeId",rs.getString("storeId"));
 				map.put("rentalDate", rs.getString("rentalDate"));
 				map.put("inventoryId", rs.getInt("inventoryId"));
 				map.put("customerId", rs.getInt("customerId"));
@@ -113,29 +148,58 @@ public class RentalDao {
 					+ "AND  r.rental_date BETWEEN STR_TO_DATE(?,'%Y-%m-%d')\r\n"
 					+ "AND STR_TO_DATE(?,'%Y-%m-%d')";			//s.store_id=?
 			if(storeId==-1 && beginDate.equals("0") && endDate.equals("9999-12-12") ) {				//모든 항목 선택 x 3개
-				
-				  stmt = conn.prepareStatement(sql);
+		
+				stmt = conn.prepareStatement(sql);
 				  stmt.setString(1, "%"+customerName+"%");
 				  stmt.setString(2, beginDate);
 				  stmt.setString(3,endDate ) ;
-			} else if(storeId==-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {	//년도 O
-
-				  stmt = conn.prepareStatement(sql);
-				  stmt.setString(1, "%"+customerName+"%");
-				  stmt.setString(2, beginDate);
-				  stmt.setString(3,endDate );
-
-			} else if (storeId !=-1 && beginDate.equals("0") && endDate.equals("9999-12-12") ) {			//가게 O
-					sql+="and s.store_id=? ";
+	
+			} else if (storeId !=-1 && beginDate.equals("0") && endDate.equals("9999-12-12") ) {			//가게만 O
+				  sql+="and s.store_id=?";
 				  stmt = conn.prepareStatement(sql);	
 				  stmt.setString(1, "%"+customerName+"%");
 				  stmt.setString(2, beginDate);
 				  stmt.setString(3,endDate ) ;
 				  stmt.setInt(4, storeId);
-				 
-			}else if (storeId !=-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//연도, 가게 O
-				  sql+="and s.store_id=? ";
+
+				  
+			} else if(storeId==-1 && !beginDate.equals("0") && endDate.equals("9999-12-12") ) {	//빌린년도 O
 				  stmt = conn.prepareStatement(sql);
+				  stmt.setString(1, "%"+customerName+"%");
+				  stmt.setString(2, beginDate);
+				  stmt.setString(3,endDate );
+
+			}else if(storeId==-1 && beginDate.equals("0") && !endDate.equals("9999-12-12") ) {	//반환년도 O
+				  stmt = conn.prepareStatement(sql);
+				  stmt.setString(1, "%"+customerName+"%");
+				  stmt.setString(2, beginDate);
+				  stmt.setString(3,endDate );
+
+			} else if (storeId !=-1 && !beginDate.equals("0") && endDate.equals("9999-12-12") ) {		//가게번호, 빌린년도
+				sql+="and s.store_id=?";
+				stmt = conn.prepareStatement(sql);
+				  stmt.setString(1, "%"+customerName+"%");
+				  stmt.setString(2, beginDate);
+				  stmt.setString(3,endDate ) ;
+				  stmt.setInt(4, storeId);
+
+			} else if (storeId !=-1 && beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//가게번호, 반환년도
+				sql+="and s.store_id=?";
+				stmt = conn.prepareStatement(sql);
+				  stmt.setString(1, "%"+customerName+"%");
+				  stmt.setString(2, beginDate);
+				  stmt.setString(3,endDate ) ;
+				  stmt.setInt(4, storeId);
+
+			} else if (storeId ==-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//빌린년도,반환년도
+				stmt = conn.prepareStatement(sql);
+				  stmt.setString(1, "%"+customerName+"%");
+				  stmt.setString(2, beginDate);
+				  stmt.setString(3,endDate ) ;
+
+			} else if (storeId !=-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//3개 다 O
+				sql+="and s.store_id=?";
+				stmt = conn.prepareStatement(sql);
 				  stmt.setString(1, "%"+customerName+"%");
 				  stmt.setString(2, beginDate);
 				  stmt.setString(3,endDate ) ;

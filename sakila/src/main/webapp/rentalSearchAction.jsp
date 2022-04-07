@@ -59,6 +59,7 @@
 		<thead>
 			<tr>
 				<th>rentalId</th>
+				<th>storeId</th>
 				<th>inventoryId</th>
 				<th>customerId</th>
 				<th>staffId</th>
@@ -74,6 +75,7 @@
 				for(Map<String,Object> m : list){
 			%>		<tr>
 					<td><%=m.get("rentalId") %></td>
+					<td><%=m.get("storeId") %></td>
 					<td><%=m.get("inventoryId") %></td>
 					<td><%=m.get("customerId") %></td>
 					<td><%=m.get("staffId") %></td>

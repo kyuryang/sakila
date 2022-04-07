@@ -65,12 +65,13 @@
 		<%		
 			}
 		%>
-	</table>																		
+	</table>
+	<div></div>																		
 	<% if(currentPage>1){ %>				<!--  현재페이지가 1보다크면 이전페이지 출력 -->
-	<div><a href="<%=request.getContextPath() %>/filmSearchAction.jsp?currentPage=<%=currentPage-1%>&price=<%=price%>&length=<%=length%>&category=<%=category%>&rating=<%=rating%>&title=<%=title%>&actors=<%=actors%>"> 이전</a></div>
+			<a href="<%=request.getContextPath() %>/filmSearchAction.jsp?currentPage=<%=currentPage-1%>&price=<%=price%>&length=<%=length%>&category=<%=category%>&rating=<%=rating%>&title=<%=title%>&actors=<%=actors%>"> 이전</a>
 	<% }%>
 	<% if(currentPage<lastPage){ %>				<!-- 마지막페이지보다 작으면 다음페이지 출력 -->
-	<div><a href="<%=request.getContextPath() %>/filmSearchAction.jsp?currentPage=<%=currentPage+1%>&price=<%=price%>&length=<%=length%>&category=<%=category%>&rating=<%=rating%>&title=<%=title%>&actors=<%=actors%>"> 다음</a></div>
+			<a href="<%=request.getContextPath() %>/filmSearchAction.jsp?currentPage=<%=currentPage+1%>&price=<%=price%>&length=<%=length%>&category=<%=category%>&rating=<%=rating%>&title=<%=title%>&actors=<%=actors%>"> 다음</a>
 	<% }%>
 	
 </body>
