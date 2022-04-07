@@ -34,7 +34,7 @@ public class RentalDao {
 				+ "WHERE concat(c.first_name,' ',c.last_name) LIKE ? "
 				+ "AND  r.rental_date BETWEEN STR_TO_DATE(?,'%Y-%m-%d')\r\n"
 				+ "AND STR_TO_DATE(?,'%Y-%m-%d')";			//s.store_id=?
-		if(storeId==-1 && beginDate.equals("0") && endDate.equals("9999-12-12") ) {				//모든 항목 선택 x 3개
+		if(storeId==-1  ) {				//모든 항목 선택 x 3개
 			sql += " ORDER BY rental_id LIMIT ?, ?";
 			stmt = conn.prepareStatement(sql);
 			  stmt.setString(1, "%"+customerName+"%");
@@ -42,7 +42,7 @@ public class RentalDao {
 			  stmt.setString(3,endDate ) ;
 			  stmt.setInt(4, beginRow);
 			  stmt.setInt(5, rowPerPage);
-		} else if (storeId !=-1 && beginDate.equals("0") && endDate.equals("9999-12-12") ) {			//가게만 O
+		} else if (storeId !=-1  ) {			//가게만 O
 			  sql+="and s.store_id=?  ORDER BY rental_id LIMIT ?, ?";
 			  stmt = conn.prepareStatement(sql);	
 			  stmt.setString(1, "%"+customerName+"%");
@@ -52,58 +52,7 @@ public class RentalDao {
 			  stmt.setInt(5, beginRow);
 			  stmt.setInt(6, rowPerPage);
 			  
-		} else if(storeId==-1 && !beginDate.equals("0") && endDate.equals("9999-12-12") ) {	//빌린년도 O
-			sql += " ORDER BY rental_id LIMIT ?, ?";
-			stmt = conn.prepareStatement(sql);
-			  stmt.setString(1, "%"+customerName+"%");
-			  stmt.setString(2, beginDate);
-			  stmt.setString(3,endDate );
-			  stmt.setInt(4, beginRow);
-			  stmt.setInt(5, rowPerPage);
-		}else if(storeId==-1 && beginDate.equals("0") && !endDate.equals("9999-12-12") ) {	//반환년도 O
-			sql += " ORDER BY rental_id LIMIT ?, ?";
-			stmt = conn.prepareStatement(sql);
-			  stmt.setString(1, "%"+customerName+"%");
-			  stmt.setString(2, beginDate);
-			  stmt.setString(3,endDate );
-			  stmt.setInt(4, beginRow);
-			  stmt.setInt(5, rowPerPage);
-		} else if (storeId !=-1 && !beginDate.equals("0") && endDate.equals("9999-12-12") ) {		//가게번호, 빌린년도
-			sql+="and s.store_id=? ORDER BY rental_id LIMIT ?, ?";
-			stmt = conn.prepareStatement(sql);
-			  stmt.setString(1, "%"+customerName+"%");
-			  stmt.setString(2, beginDate);
-			  stmt.setString(3,endDate ) ;
-			  stmt.setInt(4, storeId);
-			  stmt.setInt(5, beginRow);
-			  stmt.setInt(6, rowPerPage);
-		} else if (storeId !=-1 && beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//가게번호, 반환년도
-			sql+="and s.store_id=? ORDER BY rental_id LIMIT ?, ?";
-			stmt = conn.prepareStatement(sql);
-			  stmt.setString(1, "%"+customerName+"%");
-			  stmt.setString(2, beginDate);
-			  stmt.setString(3,endDate ) ;
-			  stmt.setInt(4, storeId);
-			  stmt.setInt(5, beginRow);
-			  stmt.setInt(6, rowPerPage);
-		} else if (storeId ==-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//빌린년도,반환년도
-			sql+=" ORDER BY rental_id LIMIT ?, ?";
-			stmt = conn.prepareStatement(sql);
-			  stmt.setString(1, "%"+customerName+"%");
-			  stmt.setString(2, beginDate);
-			  stmt.setString(3,endDate ) ;
-			  stmt.setInt(4, beginRow);
-			  stmt.setInt(5, rowPerPage);
-		} else if (storeId !=-1 && !beginDate.equals("0") && !endDate.equals("9999-12-12") ) {		//3개 다 O
-			sql+="and s.store_id=? ORDER BY rental_id LIMIT ?, ?";
-			stmt = conn.prepareStatement(sql);
-			  stmt.setString(1, "%"+customerName+"%");
-			  stmt.setString(2, beginDate);
-			  stmt.setString(3,endDate ) ;
-			  stmt.setInt(4, storeId);
-			  stmt.setInt(5, beginRow);
-			  stmt.setInt(6, rowPerPage);
-		}
+		} 
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				 map= new HashMap<String, Object>();
