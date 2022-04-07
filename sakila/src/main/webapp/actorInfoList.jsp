@@ -6,7 +6,7 @@
 
 
 
-//페이징 
+	//페이징 
  	int currentPage =1;			//현재 페이지
 	if(request.getParameter("currentPage")!=null){				//이전,다음 링크를 통해서 들어왔다면 
 		currentPage=Integer.parseInt(request.getParameter("currentPage"));		//현재 페이지 값은 링크를 타서 들어 온값으로
