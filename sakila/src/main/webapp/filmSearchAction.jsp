@@ -15,7 +15,7 @@
 	}
 	String title = request.getParameter("title");
 	String actors = request.getParameter("actors");
-	
+	//페이징
 	int currentPage=1;
 	if(request.getParameter("currentPage")!=null){
 		currentPage=Integer.parseInt(request.getParameter("currentPage"));

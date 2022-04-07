@@ -13,6 +13,7 @@
 	<ol>
 			<li><a href="<%=request.getContextPath()%>/storeList.jsp">storeList</a></li>
 			<li><a href="<%=request.getContextPath()%>/staffList.jsp">staffList</a></li>
+			<li><a href="<%=request.getContextPath()%>/rentalSearchForm.jsp">대여 상세검색</a></li>
 	</ol>
 		<h1>뷰 리스트</h1>
 	<ol><!-- view 7개 리스트 -->

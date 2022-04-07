@@ -7,6 +7,44 @@ import util.DBUtil;
 import java.sql.*;
 
 public class StoreDao {
+	
+	public List<Integer> selectStoreIdList(){			//storeId를 리스트로 받는 메서드
+		List<Integer> list =new ArrayList<>();
+		
+		Connection conn = null;
+		PreparedStatement stmt=null;
+		ResultSet rs= null;							//db연동
+		conn = DBUtil.getConnection();
+		
+		String sql = "select store_id storeId from store order by store_id;";	//store테이블에서 store_id를 조회하는 쿼리문
+		
+		try {
+			stmt=conn.prepareStatement(sql);
+			rs=stmt.executeQuery();
+			
+			while (rs.next()) {
+				list.add(rs.getInt("storeId"));									//결과값 rs를 List에 저장
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+				stmt.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
+		
+		return list;															//list 반환
+	}
+	
 	//ArrayList는  List 인터페이스의 구현체중 하나이다.
 	//HashMap은 인터페이스의 구현체 중 하나이다.
 	public List<Map<String,Object>> selectStoreList(){				//다형성 ArrayList의 부모 -> List , Hashmap의 부모 -> map
@@ -68,8 +106,7 @@ public class StoreDao {
 			System.out.print(m.get("staffName"));
 			System.out.print(m.get("addressName"));				//단위테스트
 			System.out.print(m.get("addressId"));
-			System.out.println(m.get("lastUpdate"
-					+ ""));
+			System.out.println(m.get("lastUpdate"));
 			
 		}
 	}
